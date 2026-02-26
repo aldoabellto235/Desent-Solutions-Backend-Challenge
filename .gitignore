@@ -1,0 +1,14 @@
+# Binaries
+bin/
+
+# Environment
+.env
+
+# Claude
+CLAUDE.md
+.claude/
+
+# Go
+*.exe
+*.test
+*.out
