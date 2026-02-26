@@ -13,5 +13,5 @@ func NewPingHandler() *PingHandler {
 }
 
 func (h *PingHandler) Ping(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{"message": "pong"})
+	return c.JSON(http.StatusOK, map[string]bool{"success": true})
 }
