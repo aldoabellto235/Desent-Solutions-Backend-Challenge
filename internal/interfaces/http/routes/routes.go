@@ -2,7 +2,9 @@ package routes
 
 import (
 	"api-quest/internal/interfaces/http/handlers"
-"github.com/labstack/echo/v4"
+	authmw "api-quest/internal/interfaces/http/middleware"
+
+	"github.com/labstack/echo/v4"
 )
 
 func Register(
@@ -25,7 +27,7 @@ func Register(
 	// Books group — Level 3, 4, 6, 7
 	b := e.Group("/books")
 	b.POST("", book.Create)
-	b.GET("", book.List)
+	b.GET("", book.List, authmw.JWTAuth(jwtSecret)) // Level 5: protected
 	b.GET("/:id", book.GetByID)
 	b.PUT("/:id", book.Update)
 	b.DELETE("/:id", book.Delete)
