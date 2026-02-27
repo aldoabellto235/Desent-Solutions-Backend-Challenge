@@ -35,13 +35,6 @@ type bookResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type listResponse struct {
-	Data  interface{} `json:"data"`
-	Page  int         `json:"page"`
-	Limit int         `json:"limit"`
-	Total int64       `json:"total"`
-}
-
 func toResponse(b *book.Book) bookResponse {
 	return bookResponse{
 		ID:        b.ID,
@@ -83,7 +76,6 @@ func (h *BookHandler) List(c echo.Context) error {
 
 	page := 1
 	limit := 10
-	paginated := pageStr != "" || limitStr != ""
 
 	if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
 		page = p
@@ -93,7 +85,7 @@ func (h *BookHandler) List(c echo.Context) error {
 	}
 
 	filter := book.Filter{Author: author, Page: page, Limit: limit}
-	books, total, err := h.service.List(c.Request().Context(), filter)
+	books, _, err := h.service.List(c.Request().Context(), filter)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to list books"})
 	}
@@ -101,15 +93,6 @@ func (h *BookHandler) List(c echo.Context) error {
 	resp := make([]bookResponse, len(books))
 	for i, b := range books {
 		resp[i] = toResponse(b)
-	}
-
-	if paginated {
-		return c.JSON(http.StatusOK, listResponse{
-			Data:  resp,
-			Page:  page,
-			Limit: limit,
-			Total: total,
-		})
 	}
 
 	return c.JSON(http.StatusOK, resp)
