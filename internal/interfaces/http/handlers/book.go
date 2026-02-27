@@ -83,6 +83,7 @@ func (h *BookHandler) List(c echo.Context) error {
 
 	page := 1
 	limit := 10
+	paginated := pageStr != "" || limitStr != ""
 
 	if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
 		page = p
@@ -102,12 +103,16 @@ func (h *BookHandler) List(c echo.Context) error {
 		resp[i] = toResponse(b)
 	}
 
-	return c.JSON(http.StatusOK, listResponse{
-		Data:  resp,
-		Page:  page,
-		Limit: limit,
-		Total: total,
-	})
+	if paginated {
+		return c.JSON(http.StatusOK, listResponse{
+			Data:  resp,
+			Page:  page,
+			Limit: limit,
+			Total: total,
+		})
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }
 
 func (h *BookHandler) GetByID(c echo.Context) error {
